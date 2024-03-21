@@ -8,9 +8,7 @@ class Todolist extends React.Component {
     super(props);
   }
   render() {
-    const { itemList } = this.props;
-    const { deleteItem } = this.props;
-    const { checkedItem } = this.props;
+    const { itemList, deleteItem, checkedItem, editItem } = this.props;
     const myStyle = {
       gap: "5px",
     };
@@ -24,6 +22,7 @@ class Todolist extends React.Component {
               deleteItem={deleteItem}
               itemList={itemList}
               checkedItem={checkedItem}
+              editItem={editItem}
             />
           );
         })}

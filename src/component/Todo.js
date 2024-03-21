@@ -27,11 +27,37 @@ class Todo extends React.Component {
     }));
   };
 
-  checkedItem = (isChecked) => {
-    this.setState({ check: isChecked ? false : true });
+  checkedItem = () => {
+    this.setState((prevState) => ({
+      itemList: prevState.itemList.map((item) => ({
+        ...item,
+        check: !item.check,
+      })),
+    }));
   };
 
+  editItem = (id, newContent) => {
+    this.setState((prevState) => ({
+      itemList: prevState.itemList.map((item) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            content: newContent,
+          };
+        }
+        return item;
+      }),
+    }));
+  };
+
+  checkAll = () => {};
+
+  handleActive = () => {};
+
+  handleFinished = () => {};
+
   render() {
+    const { itemList } = this.state;
     const h1Style = {
       fontSize: "40px",
     };
@@ -44,22 +70,30 @@ class Todo extends React.Component {
     const contentStyle = {
       display: "flex",
       flexDirection: "column",
-      alignItems: "center",
+      // alignItems: "center",
       gap: "10px",
     };
 
-    const { itemList } = this.state;
     return (
       <div style={myStyle}>
         <h1 style={h1Style}>Todos</h1>
         <div style={contentStyle}>
-          <Input addItem={this.addItem} />
+          <Input
+            addItem={this.addItem}
+            itemList={itemList}
+            checkAll={this.checkAll}
+          />
           <Todolist
             itemList={itemList}
             deleteItem={this.deleteItem}
             checkedItem={this.checkedItem}
+            editItem={this.editItem}
           />
-          <Footer itemList={itemList} />
+          <Footer
+            itemList={itemList}
+            handleActive={this.handleActive}
+            handleFinished={this.handleFinished}
+          />
         </div>
       </div>
     );
