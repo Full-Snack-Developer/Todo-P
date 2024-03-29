@@ -1,9 +1,10 @@
-import React from "react";
+import React, { PureComponent } from "react";
 
-class Item extends React.Component {
+class Item extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      item: this.props.item,
       check: this.props.item.check,
       content: this.props.item.content,
       isEditing: false,
@@ -17,10 +18,11 @@ class Item extends React.Component {
 
   handleChecked = () => {
     const { item, checkedItem } = this.props;
-    checkedItem(item.check);
-    this.setState((prevState) => ({
-      check: !prevState.check, // cập nhật trạng thái của checkbox
+    checkedItem(item.id, !item.check);
+    this.setState(() => ({
+      check: !item.check,
     }));
+    console.log("Giá trị mới nhất của check:", this.state.check);
   };
 
   handleFocus = () => {
@@ -42,7 +44,6 @@ class Item extends React.Component {
   render() {
     const { content } = this.state;
     const { item } = this.props;
-
     return (
       <div
         style={{
@@ -59,8 +60,8 @@ class Item extends React.Component {
       >
         <input
           type="checkbox"
-          checked={this.state.check}
-          onClick={this.handleChecked}
+          checked={this.props.item.check}
+          onChange={this.handleChecked}
         />
         {this.state.isEditing ? ( // toán tử 3 ngôi kiểm tra isEditing
           <input
@@ -72,6 +73,7 @@ class Item extends React.Component {
           />
         ) : (
           <div
+            key={item.id}
             style={{
               textDecoration: this.state.check ? "line-through" : "none", //toán tử 3 ngôi kiểm tra check
             }}
@@ -85,5 +87,4 @@ class Item extends React.Component {
     );
   }
 }
-
 export default Item;

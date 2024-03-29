@@ -1,15 +1,37 @@
 import React from "react";
-
-//
 import Todolist from "./Todolist";
 import Input from "./Input";
 import Footer from "./footer";
+//
+export const FILTER = {
+  ALL: "ALL",
+  DOING: "DOING",
+  DONE: "DONE",
+};
+
+const h1Style = {
+  fontSize: "40px",
+};
+const myStyle = {
+  display: "flex",
+  justifyContent: "center",
+  flexDirection: "column",
+  alignItems: "center",
+};
+const contentStyle = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "10px",
+};
 
 class Todo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       itemList: [],
+      filter: "",
+      currentPage: 1,
+      pageSize: 4,
     };
   }
 
@@ -19,6 +41,7 @@ class Todo extends React.Component {
     this.setState({
       itemList: newItemList,
     });
+    console.log("check");
   };
 
   deleteItem = (id) => {
@@ -27,12 +50,17 @@ class Todo extends React.Component {
     }));
   };
 
-  checkedItem = () => {
+  checkedItem = (id, newCheck) => {
     this.setState((prevState) => ({
-      itemList: prevState.itemList.map((item) => ({
-        ...item,
-        check: !item.check,
-      })),
+      itemList: prevState.itemList.map((item) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            check: newCheck,
+          };
+        }
+        return item;
+      }),
     }));
   };
 
@@ -50,53 +78,39 @@ class Todo extends React.Component {
     }));
   };
 
-  checkAll = () => {};
+  filterList = (filter) => {
+    this.setState({ filter });
+  };
 
-  handleActive = () => {};
-
-  handleFinished = () => {};
+  checkAll = () => {
+    const newCheck = this.state.itemList.every((item) => item.check);
+    this.setState((prevState) => ({
+      itemList: prevState.itemList.map((item) => ({
+        ...item,
+        check: !newCheck,
+      })),
+    }));
+  };
 
   render() {
-    const { itemList } = this.state;
-    const h1Style = {
-      fontSize: "40px",
-    };
-    const myStyle = {
-      display: "flex",
-      justifyContent: "center",
-      flexDirection: "column",
-      alignItems: "center",
-    };
-    const contentStyle = {
-      display: "flex",
-      flexDirection: "column",
-      // alignItems: "center",
-      gap: "10px",
-    };
-
     return (
       <div style={myStyle}>
         <h1 style={h1Style}>Todos</h1>
         <div style={contentStyle}>
-          <Input
-            addItem={this.addItem}
-            itemList={itemList}
-            checkAll={this.checkAll}
-          />
+          <Input addItem={this.addItem} itemList={this.state.itemList} />
           <Todolist
-            itemList={itemList}
+            itemList={this.state.itemList}
             deleteItem={this.deleteItem}
             checkedItem={this.checkedItem}
             editItem={this.editItem}
+            filter={this.state.filter}
+            checkAll={this.checkAll}
           />
-          <Footer
-            itemList={itemList}
-            handleActive={this.handleActive}
-            handleFinished={this.handleFinished}
-          />
+          <Footer itemList={this.state.itemList} filterList={this.filterList} />
         </div>
       </div>
     );
   }
 }
+
 export default Todo;
