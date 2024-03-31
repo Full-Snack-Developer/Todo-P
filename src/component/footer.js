@@ -18,11 +18,11 @@ class Footer extends React.Component {
   render() {
     const { itemList } = this.props;
     return (
-      <p>
+      <div>
         Count: {itemList.length}
         <button onClick={() => this.handleBtn(FILTER.DOING)}>Active</button>
         <button onClick={() => this.handleBtn(FILTER.DONE)}>Finished</button>
-      </p>
+      </div>
     );
   }
 }

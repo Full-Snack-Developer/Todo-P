@@ -1,60 +1,68 @@
 import React from "react";
-
-//
-import "../component/Item.js";
 import Item from "../component/Item.js";
+import Panigation from "./Panigation";
 import { FILTER } from "./Todo.js";
-
-const myStyle = {
-  gap: "5px",
-};
+import "../Css/Todolist.css";
 
 class Todolist extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      // list: this.props.itemList,
+      currentPage: 1,
+      pageSize: 5,
     };
   }
 
   handleClickBtn = () => {
-    const { checkAll, itemList } = this.props;
+    const { checkAll } = this.props;
     checkAll();
-    console.log(itemList);
+  };
+
+  handlePageChange = (pageNumber) => {
+    this.setState({ currentPage: pageNumber });
   };
 
   render() {
     const { itemList, deleteItem, checkedItem, editItem, filter } = this.props;
+    const { currentPage, pageSize } = this.state;
 
     let filterItem = itemList;
     if (filter === FILTER.DOING) {
-      console.log("doing");
       filterItem = itemList.filter((item) => !item.check);
-      console.log(itemList);
     } else if (filter === FILTER.DONE) {
-      console.log("done");
       filterItem = itemList.filter((item) => item.check);
-      console.log(itemList);
     }
+
+    const startIndex = Math.max((currentPage - 1) * pageSize, 0);
+    const endIndex = Math.min(startIndex + pageSize, filterItem.length);
+    const currentPageItems = filterItem.slice(startIndex, endIndex);
+
+    const totalPages = Math.ceil(filterItem.length / pageSize);
+
     return (
-      <div style={myStyle}>
-        <div>
+      <div className="todolist-container">
+        <div className="button-container">
           <button onClick={this.handleClickBtn}>ALL</button>
         </div>
-        {filterItem.map((item) => {
-          return (
+        <div className="item-container">
+          {currentPageItems.map((item) => (
             <Item
               key={item.id}
               item={item}
               deleteItem={deleteItem}
-              itemList={itemList}
               checkedItem={checkedItem}
               editItem={editItem}
             />
-          );
-        })}
+          ))}
+        </div>
+        <Panigation
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handlePageChange={this.handlePageChange}
+        />
       </div>
     );
   }
 }
+
 export default Todolist;

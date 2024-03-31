@@ -3,6 +3,7 @@ import Todolist from "./Todolist";
 import Input from "./Input";
 import Footer from "./footer";
 //
+import Pagination from "./Panigation";
 export const FILTER = {
   ALL: "ALL",
   DOING: "DOING",
@@ -30,8 +31,6 @@ class Todo extends React.Component {
     this.state = {
       itemList: [],
       filter: "",
-      currentPage: 1,
-      pageSize: 4,
     };
   }
 
