@@ -2,6 +2,9 @@ import React from "react";
 import "../Css/Panigation.css";
 
 class Panigation extends React.Component {
+  constructor(props) {
+    super(props);
+  }
   render() {
     const { currentPage, totalPages, handlePageChange } = this.props;
 
