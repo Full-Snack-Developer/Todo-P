@@ -22,6 +22,7 @@ class Footer extends React.Component {
         Count: {itemList.length}
         <button onClick={() => this.handleBtn(FILTER.DOING)}>Active</button>
         <button onClick={() => this.handleBtn(FILTER.DONE)}>Finished</button>
+        {/* <button onClick={() => this.handleBtn(FILTER.ALLS)}></button> */}
       </div>
     );
   }

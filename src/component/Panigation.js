@@ -11,7 +11,7 @@ class Panigation extends React.Component {
     return (
       <nav>
         <ul className="pagination">
-          {Array.from({ length: totalPages }, (index) => index + 1).map(
+          {Array.from({ length: totalPages }, (_, index) => index + 1).map(
             (number) => (
               <li
                 key={number}

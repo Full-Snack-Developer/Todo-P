@@ -41,6 +41,10 @@ class Item extends PureComponent {
     this.setState({ isEditing: false });
   };
 
+  handleItemClick = (content) => {
+    this.props.onItemClick(content); // Truyền nội dung của Item lên component cha
+  };
+
   render() {
     const { content } = this.state;
     const { item } = this.props;
@@ -70,14 +74,15 @@ class Item extends PureComponent {
             onChange={this.handleEditChange}
             onBlur={this.handleEditSubmit}
             autoFocus
+            onClick={this.handleItemClick}
           />
         ) : (
           <div
             key={item.id}
             style={{
-              textDecoration: this.state.check ? "line-through" : "none", //toán tử 3 ngôi kiểm tra check
+              textDecoration: this.state.check ? "line-through" : "none",
             }}
-            onClick={this.handleFocus}
+            onClick={() => this.handleItemClick(item.content)}
           >
             {item.content}
           </div>

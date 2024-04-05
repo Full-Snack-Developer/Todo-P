@@ -23,8 +23,8 @@ class Todolist extends React.Component {
   };
 
   render() {
-    const { itemList, deleteItem, checkedItem, editItem, filter } = this.props;
-    const { currentPage, pageSize } = this.state;
+    const { itemList, deleteItem, checkedItem, editItem, filter, onItemClick } =
+      this.props;
 
     let filterItem = itemList;
     if (filter === FILTER.DOING) {
@@ -33,33 +33,23 @@ class Todolist extends React.Component {
       filterItem = itemList.filter((item) => item.check);
     }
 
-    const startIndex = Math.max((currentPage - 1) * pageSize, 0);
-    const endIndex = Math.min(startIndex + pageSize, filterItem.length);
-    const currentPageItems = filterItem.slice(startIndex, endIndex);
-
-    const totalPages = Math.ceil(filterItem.length / pageSize);
-
     return (
       <div className="todolist-container">
         <div className="button-container">
-          <button onClick={this.handleClickBtn}>ALL</button>
+          <button onClick={this.handleClickBtn}>CHECK ALL</button>
         </div>
         <div className="item-container">
-          {currentPageItems.map((item) => (
+          {filterItem.map((item) => (
             <Item
               key={item.id}
               item={item}
               deleteItem={deleteItem}
               checkedItem={checkedItem}
               editItem={editItem}
+              onItemClick={this.handleItemClick}
             />
           ))}
         </div>
-        <Panigation
-          currentPage={currentPage}
-          totalPages={totalPages}
-          handlePageChange={this.handlePageChange}
-        />
       </div>
     );
   }

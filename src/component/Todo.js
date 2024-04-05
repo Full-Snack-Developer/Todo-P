@@ -8,6 +8,7 @@ export const FILTER = {
   ALL: "ALL",
   DOING: "DOING",
   DONE: "DONE",
+  ALLS: "ALLS",
 };
 
 const h1Style = {
@@ -28,6 +29,7 @@ const contentStyle = {
 class Todo extends React.Component {
   constructor(props) {
     super(props);
+    this.inputRef = React.createRef();
     this.state = {
       itemList: [],
       filter: "",
@@ -39,8 +41,8 @@ class Todo extends React.Component {
     const newItemList = [newItem, ...itemList];
     this.setState({
       itemList: newItemList,
+      selectedItemContent: "",
     });
-    console.log("check");
   };
 
   deleteItem = (id) => {
@@ -91,12 +93,21 @@ class Todo extends React.Component {
     }));
   };
 
+  handleItemClick = (content) => {
+    this.setState({ selectedItemContent: content }); // Cập nhật nội dung của Item được chọn
+  };
   render() {
     return (
       <div style={myStyle}>
         <h1 style={h1Style}>Todos</h1>
         <div style={contentStyle}>
-          <Input addItem={this.addItem} itemList={this.state.itemList} />
+          <Input
+            addItem={this.addItem}
+            itemList={this.state.itemList}
+            ref={(input) => (this.inputRef = input)}
+            onItemClick={this.handleItemClick}
+            selectedItemContent={this.state.selectedItemContent}
+          />
           <Todolist
             itemList={this.state.itemList}
             deleteItem={this.deleteItem}
@@ -104,6 +115,7 @@ class Todo extends React.Component {
             editItem={this.editItem}
             filter={this.state.filter}
             checkAll={this.checkAll}
+            onItemClick={this.handleItemClick}
           />
           <Footer itemList={this.state.itemList} filterList={this.filterList} />
         </div>
