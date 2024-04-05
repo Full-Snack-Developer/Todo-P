@@ -76,6 +76,7 @@ class Todo extends React.Component {
         }
         return item;
       }),
+      selectedItem: null,
     }));
   };
 
@@ -94,7 +95,7 @@ class Todo extends React.Component {
   };
 
   handleItemClick = (content) => {
-    this.setState({ selectedItemContent: content }); // Cập nhật nội dung của Item được chọn
+    this.setState({ selectedItemContent: content });
   };
   render() {
     return (

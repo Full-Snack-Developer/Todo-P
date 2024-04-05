@@ -38,11 +38,10 @@ class Item extends PureComponent {
     const { item, editItem } = this.props;
     const { content } = this.state;
     editItem(item.id, content);
-    this.setState({ isEditing: false });
   };
 
   handleItemClick = (content) => {
-    this.props.onItemClick(content); // Truyền nội dung của Item lên component cha
+    this.props.onItemClick(content);
   };
 
   render() {

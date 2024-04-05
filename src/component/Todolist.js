@@ -46,7 +46,7 @@ class Todolist extends React.Component {
               deleteItem={deleteItem}
               checkedItem={checkedItem}
               editItem={editItem}
-              onItemClick={this.handleItemClick}
+              onItemClick={onItemClick}
             />
           ))}
         </div>

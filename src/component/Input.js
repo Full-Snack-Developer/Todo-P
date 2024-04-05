@@ -1,5 +1,5 @@
 import React from "react";
-import { FILTER } from "./Todo";
+// import { FILTER } from "./Todo";
 
 const myStyle = {
   height: "30px",
@@ -25,44 +25,51 @@ class Input extends React.Component {
     super(props);
     this.inputRef = React.createRef();
     this.state = {
-      list: this.props.itemList,
+      value: "",
     };
   }
 
-  handdleInput = (e) => {
-    const { value } = e.target;
+  handleChange = (e) => {
     this.setState({
-      value,
+      value: e.target.value,
     });
   };
 
-  handdleKeyDown = (e) => {
+  handleKeyDown = (e) => {
     if (e.key === "Enter") {
-      const { addItem } = this.props;
-      const newItem = {
-        id: Math.floor(Math.random() * 1000),
-        content: e.target.value,
-        check: false,
-      };
-      addItem(newItem);
-      e.target.value = "";
+      const { value } = this.state;
+      const { addItem, editItem, selectedItem } = this.props;
+      if (selectedItem) {
+        editItem(selectedItem.id, value);
+      } else {
+        const newItem = {
+          id: Math.floor(Math.random() * 1000),
+          content: value,
+          check: false,
+        };
+        addItem(newItem);
+      }
+      this.setState({ value: "" });
     }
   };
 
-  // Hàm để cập nhật nội dung của Item được chọn và hiển thị nó trong ô input
+  // Cập nhật giá trị của ô input khi selectedItemContent thay đổi
   componentDidUpdate(prevProps) {
     if (prevProps.selectedItemContent !== this.props.selectedItemContent) {
-      this.inputRef.current.value = this.props.selectedItemContent; // Cập nhật giá trị của ô input
+      this.setState({ value: this.props.selectedItemContent });
     }
   }
 
   render() {
+    const { value } = this.state;
     return (
       <label style={labelStyle}>
         <input
           style={myStyle}
           className="inputStyle"
-          onKeyDown={this.handdleKeyDown}
+          onKeyDown={this.handleKeyDown}
+          onChange={this.handleChange}
+          value={value}
           placeholder="Type something..."
           ref={this.inputRef}
         />
