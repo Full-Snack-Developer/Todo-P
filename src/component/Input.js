@@ -1,81 +1,67 @@
 import React from "react";
-// import { FILTER } from "./Todo";
-
-const myStyle = {
-  height: "30px",
-  width: "275px",
-  border: "2px solid rgba(0, 0, 0, 0.55)",
-  borderRadius: "5px",
-  padding: "10px",
-};
-
-const styleBtn = {
-  height: "50px",
-  with: "80px",
-  borderRadius: "5px",
-};
-
-const labelStyle = {
-  display: "flex",
-  columnGap: "3px",
-};
+import propTypes from "prop-types";
+import produce from "immer";
+import "../Css/Input.css";
 
 class Input extends React.Component {
   constructor(props) {
     super(props);
-    this.inputRef = React.createRef();
     this.state = {
-      value: "",
+      itemId: null,
+      isCheckedAll: this.props.status,
     };
+    this.inputRef = React.createRef();
   }
 
-  handleChange = (e) => {
-    this.setState({
-      value: e.target.value,
-    });
-  };
-
-  handleKeyDown = (e) => {
+  handleEnter = (e) => {
     if (e.key === "Enter") {
-      const { value } = this.state;
-      const { addItem, editItem, selectedItem } = this.props;
-      if (selectedItem) {
-        editItem(selectedItem.id, value);
+      if (this.state.itemId) {
+        this.props.updateItem(this.inputRef.current.value);
       } else {
-        const newItem = {
-          id: Math.floor(Math.random() * 1000),
-          content: value,
-          check: false,
-        };
-        addItem(newItem);
+        this.props.addItem(this.inputRef.current.value);
       }
-      this.setState({ value: "" });
+      this.inputRef.current.value = "";
+      this.setState({ itemId: null });
     }
   };
 
-  // Cập nhật giá trị của ô input khi selectedItemContent thay đổi
-  componentDidUpdate(prevProps) {
-    if (prevProps.selectedItemContent !== this.props.selectedItemContent) {
-      this.setState({ value: this.props.selectedItemContent });
-    }
-  }
+  updateState = (itemId, content) => {
+    this.setState((prevState) =>
+      produce(prevState, (newState) => {
+        newState.itemId = itemId;
+      })
+    );
+    this.inputRef.current.value = content;
+    this.inputRef.current.focus();
+  };
 
+  handleBtnCheckALL = () => {
+    const { checkAllItem } = this.props;
+    checkAllItem();
+  };
   render() {
-    const { value } = this.state;
+    console.log(this.inputRef.current);
+    // console.log(this.inputRef.current.value);
+
     return (
-      <label style={labelStyle}>
+      <div className="mainInput">
         <input
-          style={myStyle}
-          className="inputStyle"
-          onKeyDown={this.handleKeyDown}
-          onChange={this.handleChange}
-          value={value}
-          placeholder="Type something..."
+          className="inputInput"
+          placeholder="type something"
+          onKeyDown={this.handleEnter}
           ref={this.inputRef}
         />
-      </label>
+        <button className="btnInput" onClick={this.handleBtnCheckALL}>
+          CHECK
+        </button>
+      </div>
     );
   }
 }
 
+Input.propTypes = {
+  handleEnter: propTypes.func,
+  updateState: propTypes.func,
+  handleBtnCheckALL: propTypes.func,
+};
 export default Input;

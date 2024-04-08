@@ -1,58 +1,83 @@
 import React from "react";
-import Item from "../component/Item.js";
-import Panigation from "./Panigation";
-import { FILTER } from "./Todo.js";
-import "../Css/Todolist.css";
+import propTypes from "prop-types";
+import Item from "../component/Item";
+import { FILTER } from "./Todo";
+import InfiniteScroll from "../component/InfiniteScroll.js";
 
+const itemsPerPage = 5;
 class Todolist extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentPage: 1,
-      pageSize: 5,
+      page: 1,
     };
+    this.handleClickBtn = this.handleClickBtn.bind(this);
+    this.data1ref = React.createRef();
   }
 
-  handleClickBtn = () => {
-    const { checkAll } = this.props;
-    checkAll();
+  componentDidMount() {
+    window.addEventListener("scroll", this.handleScrollToEnd);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.handleScrollToEnd);
+  }
+
+  handleScrollToEnd = () => {
+    const { itemList } = this.props;
+    const { page } = this.state;
+    const lastItem = page * itemsPerPage;
+    if (
+      window.innerHeight + window.scrollY >= document.body.offsetHeight &&
+      lastItem < itemList.length
+    ) {
+      setTimeout(() => {
+        this.setState((prevState) => ({
+          page: prevState.page + 1,
+        }));
+      }, 1000);
+    }
   };
 
-  handlePageChange = (pageNumber) => {
-    this.setState({ currentPage: pageNumber });
+  handleClickBtn = () => {
+    const { checkAllItem } = this.props;
+    checkAllItem();
   };
 
   render() {
-    const { itemList, deleteItem, checkedItem, editItem, filter, onItemClick } =
+    const { itemList, deleteItem, checkstatus, filterList, filter } =
       this.props;
-
-    let filterItem = itemList;
-    if (filter === FILTER.DOING) {
-      filterItem = itemList.filter((item) => !item.check);
-    } else if (filter === FILTER.DONE) {
-      filterItem = itemList.filter((item) => item.check);
-    }
+    const { page } = this.state;
+    const indexOfLastItem = page * itemsPerPage;
+    const currentItems = itemList.slice(0, indexOfLastItem);
 
     return (
-      <div className="todolist-container">
+      <div className="mainTodolist">
         <div className="button-container">
           <button onClick={this.handleClickBtn}>CHECK ALL</button>
         </div>
-        <div className="item-container">
-          {filterItem.map((item) => (
-            <Item
-              key={item.id}
-              item={item}
-              deleteItem={deleteItem}
-              checkedItem={checkedItem}
-              editItem={editItem}
-              onItemClick={onItemClick}
-            />
-          ))}
-        </div>
+        {currentItems.map((item) => (
+          <Item
+            ref={this.data1ref}
+            key={item.itemId}
+            itemId={item.itemId}
+            status={item.status}
+            content={item.content}
+            deleteItem={deleteItem}
+            checkstatus={checkstatus}
+            selectItem={this.props.selectItem}
+          />
+        ))}
       </div>
     );
   }
 }
+
+Todolist.propTypes = {
+  itemList: propTypes.array.isRequired,
+  deleteItem: propTypes.func.isRequired,
+  checkstatus: propTypes.func.isRequired,
+  checkAllItem: propTypes.func.isRequired,
+};
 
 export default Todolist;

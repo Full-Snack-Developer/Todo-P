@@ -1,94 +1,43 @@
-import React, { PureComponent } from "react";
+import PropTypes from "prop-types";
+import React from "react";
+import { FILTER } from "./Todo";
+import "../Css/Item.css";
 
-class Item extends PureComponent {
+class Item extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      item: this.props.item,
-      check: this.props.item.check,
-      content: this.props.item.content,
-      isEditing: false,
-    };
   }
 
-  handleDelete = () => {
-    const { item, deleteItem } = this.props;
-    deleteItem(item.id);
+  handleButtonX = () => {
+    const { deleteItem } = this.props;
+    deleteItem(this.props.itemId);
   };
 
-  handleChecked = () => {
-    const { item, checkedItem } = this.props;
-    checkedItem(item.id, !item.check);
-    this.setState(() => ({
-      check: !item.check,
-    }));
-    console.log("Giá trị mới nhất của check:", this.state.check);
-  };
-
-  handleFocus = () => {
-    this.setState({ isEditing: true });
-  };
-
-  handleEditChange = (e) => {
-    const newContent = e.target.value;
-    this.setState({ content: newContent });
-  };
-
-  handleEditSubmit = () => {
-    const { item, editItem } = this.props;
-    const { content } = this.state;
-    editItem(item.id, content);
-  };
-
-  handleItemClick = (content) => {
-    this.props.onItemClick(content);
+  handleCheckStatus = () => {
+    const { checkstatus } = this.props;
+    checkstatus(this.props.itemId);
   };
 
   render() {
-    const { content } = this.state;
-    const { item } = this.props;
+    const { content, selectItem } = this.props;
+
     return (
-      <div
-        style={{
-          width: "300px",
-          height: "50px",
-          marginBottom: "5px",
-          display: "flex",
-          alignItems: "center",
-          border: "1px solid",
-          borderRadius: "4px",
-          boxSizing: "border-box",
-          justifyContent: "space-around",
-        }}
-      >
-        <input
-          type="checkbox"
-          checked={this.props.item.check}
-          onChange={this.handleChecked}
-        />
-        {this.state.isEditing ? ( // toán tử 3 ngôi kiểm tra isEditing
-          <input
-            type="text"
-            value={content}
-            onChange={this.handleEditChange}
-            onBlur={this.handleEditSubmit}
-            autoFocus
-            onClick={this.handleItemClick}
-          />
-        ) : (
-          <div
-            key={item.id}
-            style={{
-              textDecoration: this.state.check ? "line-through" : "none",
-            }}
-            onClick={() => this.handleItemClick(item.content)}
-          >
-            {item.content}
-          </div>
-        )}
-        <button onClick={this.handleDelete}>X</button>
+      <div className="mainItem">
+        <input type="checkbox" onClick={this.handleCheckStatus} />
+        {content}
+        <div>
+          <button onClick={this.handleButtonX}>X</button>
+          <button onClick={() => selectItem(this.props.itemId)}>EDIT</button>
+        </div>
       </div>
     );
   }
 }
+
+Item.propTypes = {
+  content: PropTypes.string,
+  id: PropTypes.number,
+  checkstatus: PropTypes.func,
+  handleButtonX: PropTypes.func,
+};
 export default Item;

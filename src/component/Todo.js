@@ -1,128 +1,184 @@
 import React from "react";
-import Todolist from "./Todolist";
-import Input from "./Input";
-import Footer from "./footer";
-//
-import Pagination from "./Panigation";
+import PropTypes from "prop-types";
+import { produce } from "immer";
+import Todolist from "../component/Todolist";
+import Footer from "../component/Footer";
+import Input from "../component/Input";
+import "../Css/Todo.css";
+
 export const FILTER = {
   ALL: "ALL",
-  DOING: "DOING",
-  DONE: "DONE",
-  ALLS: "ALLS",
+  ACTIVE: "ACTIVE",
+  COMPLETED: "COMPLETED",
 };
-
-const h1Style = {
-  fontSize: "40px",
-};
-const myStyle = {
-  display: "flex",
-  justifyContent: "center",
-  flexDirection: "column",
-  alignItems: "center",
-};
-const contentStyle = {
-  display: "flex",
-  flexDirection: "column",
-  gap: "10px",
-};
-
 class Todo extends React.Component {
   constructor(props) {
     super(props);
-    this.inputRef = React.createRef();
     this.state = {
       itemList: [],
-      filter: "",
+      filter: FILTER.ALL,
+      filterList: {
+        [FILTER.ALL]: [{}],
+        [FILTER.ACTIVE]: [{}],
+        [FILTER.COMPLETED]: [{}],
+      },
     };
+    this.dataRef = React.createRef();
   }
 
-  addItem = (newItem) => {
-    const { itemList } = this.state;
-    const newItemList = [newItem, ...itemList];
-    this.setState({
-      itemList: newItemList,
-      selectedItemContent: "",
-    });
+  addItem = (value) => {
+    this.setState((prevState) =>
+      produce(prevState, (newState) => {
+        const newItem = {
+          content: value,
+          status: false,
+          itemId: Math.floor(Math.random() * 1000),
+        };
+        newState.itemList.push(newItem);
+        // newState.filterList[FILTER.ACTIVE].push(newItem);
+        // newState.filterList[FILTER.ALL].push(newItem);
+      })
+    );
   };
 
-  deleteItem = (id) => {
-    this.setState((prevState) => ({
-      itemList: prevState.itemList.filter((item) => item.id !== id),
-    }));
-  };
-
-  checkedItem = (id, newCheck) => {
-    this.setState((prevState) => ({
-      itemList: prevState.itemList.map((item) => {
-        if (item.id === id) {
-          return {
-            ...item,
-            check: newCheck,
-          };
+  deleteItem = (itemId) => {
+    this.setState((prevState) =>
+      produce(prevState, (newState) => {
+        const indexToDelete = prevState.itemList.findIndex(
+          (item) => itemId === item.itemId
+        );
+        if (indexToDelete !== -1) {
+          newState.itemList.splice(indexToDelete, 1);
         }
-        return item;
-      }),
-    }));
+      })
+    );
   };
 
-  editItem = (id, newContent) => {
-    this.setState((prevState) => ({
-      itemList: prevState.itemList.map((item) => {
-        if (item.id === id) {
-          return {
-            ...item,
-            content: newContent,
-          };
+  checkstatus = (itemId) => {
+    this.setState((prevState) =>
+      produce(prevState, (newState) => {
+        const { itemList } = newState;
+        const itemIndex = itemList.findIndex((item) => item.id === itemId);
+        if (itemIndex !== -1) {
+          const newItemList = [...itemList];
+          const updatedItem = { ...newItemList[itemIndex] };
+          updatedItem.status = !updatedItem.status;
+          newItemList[itemIndex] = updatedItem;
+          newState.itemList = newItemList;
+
+          const { filterList } = newState;
+          if (updatedItem.status) {
+            const activeIndex = filterList[FILTER.ACTIVE].findIndex(
+              (item) => item.id === itemId
+            );
+            if (activeIndex !== -1) {
+              filterList[FILTER.ACTIVE].splice(activeIndex, 1);
+            }
+            filterList[FILTER.COMPLETED].push(updatedItem);
+          } else {
+            const completedIndex = filterList[FILTER.COMPLETED].findIndex(
+              (item) => item.id === itemId
+            );
+            if (completedIndex !== -1) {
+              filterList[FILTER.COMPLETED].splice(completedIndex, 1);
+            }
+            filterList[FILTER.ACTIVE].push(updatedItem);
+          }
         }
-        return item;
-      }),
-      selectedItem: null,
-    }));
+      })
+    );
   };
 
-  filterList = (filter) => {
+  checkAllItem = () => {
+    this.setState((prevState) =>
+      produce(prevState, (newState) => {
+        const newCheck = newState.itemList.every((item) => item.status);
+        newState.itemList.forEach((item) => {
+          item.status = !newCheck;
+        });
+      })
+    );
+  };
+
+  setFilter = (filter) => {
     this.setState({ filter });
   };
 
-  checkAll = () => {
-    const newCheck = this.state.itemList.every((item) => item.check);
-    this.setState((prevState) => ({
-      itemList: prevState.itemList.map((item) => ({
-        ...item,
-        check: !newCheck,
-      })),
-    }));
+  updateItem = (updatedValue) => {
+    this.setState((prevState) =>
+      produce(prevState, (newState) => {
+        const item = newState.itemList[FILTER.ALL].find(
+          (item) => item.itemId === this.dataRef.current.state.itemId
+        );
+        const indexOfActive = newState.itemList[FILTER.ACTIVE].findIndex(
+          (item) => item.itemId === this.dataRef.current.state.itemId
+        );
+        const indexOfCompleted = newState.itemList[FILTER.COMPLETED].findIndex(
+          (item) => item.itemId === this.dataRef.current.state.itemId
+        );
+        if (item) {
+          item.content = updatedValue;
+          if (indexOfActive !== -1) {
+            newState.itemList[FILTER.ACTIVE][indexOfActive].content =
+              updatedValue;
+          }
+          if (indexOfCompleted !== -1) {
+            newState.itemList[FILTER.COMPLETED][indexOfCompleted].content =
+              updatedValue;
+          }
+        }
+      })
+    );
   };
 
-  handleItemClick = (content) => {
-    this.setState({ selectedItemContent: content });
+  selectItem = (itemId) => {
+    const item = this.state.itemList.find((item) => item.itemId === itemId);
+    const content = item.content;
+    this.dataRef.current.updateState(itemId, content);
   };
+
   render() {
+    const { itemList, filter } = this.state;
+    console.log(this.dataRef.current);
+
     return (
-      <div style={myStyle}>
-        <h1 style={h1Style}>Todos</h1>
-        <div style={contentStyle}>
+      <div className="mainTodo">
+        <div className="containerTodo">
+          {" "}
+          <h1 className="title">TODOS</h1>
           <Input
+            className="inputTodo"
             addItem={this.addItem}
-            itemList={this.state.itemList}
-            ref={(input) => (this.inputRef = input)}
-            onItemClick={this.handleItemClick}
-            selectedItemContent={this.state.selectedItemContent}
+            itemList={itemList}
+            checkAllItem={this.checkAllItem}
+            updateItem={this.updateItem}
+            ref={this.dataRef}
           />
           <Todolist
-            itemList={this.state.itemList}
+            className="todoList"
+            itemList={itemList}
             deleteItem={this.deleteItem}
-            checkedItem={this.checkedItem}
-            editItem={this.editItem}
-            filter={this.state.filter}
-            checkAll={this.checkAll}
-            onItemClick={this.handleItemClick}
+            checkstatus={this.checkstatus}
+            checkAllItem={this.checkAllItem}
+            selectItem={this.selectItem}
           />
-          <Footer itemList={this.state.itemList} filterList={this.filterList} />
+          <Footer
+            className="footer"
+            setFilter={this.setFilter}
+            filter={this.state.filter}
+          />
         </div>
       </div>
     );
   }
 }
+
+Todo.propTypes = {
+  itemList: PropTypes.array,
+  addItem: PropTypes.func,
+  deleteItem: PropTypes.func,
+  checkstatus: PropTypes.func,
+  setFilter: PropTypes.func,
+};
 
 export default Todo;
