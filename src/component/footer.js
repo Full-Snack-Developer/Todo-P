@@ -8,26 +8,26 @@ class Footer extends React.Component {
     super(props);
   }
 
-  handleBTN = (e) => {
-    this.props.setFilter(e.target.name);
-  };
+  // handleBTN = (e) => {
+  //   this.props.setFilter(e.target.name);
+  // };
   render() {
     return (
       <div className="mainFooter">
-        <button className="btnAll" name={FILTER.ALL} onClick={this.handleBTN}>
+        <button className="btnAll" name={FILTER.ALL}>
           ALL
         </button>
         <button
           className="btnActive"
           name={FILTER.ACTIVE}
-          onClick={this.handleBTN}
+          // onClick={this.handleBTN}
         >
           ACTIVE
         </button>
         <button
           className="btnFinished"
           name={FILTER.COMPLETED}
-          onClick={this.handleBTN}
+          // onClick={this.handleBTN}
         >
           COMPLETED
         </button>

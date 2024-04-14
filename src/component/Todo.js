@@ -5,13 +5,17 @@ import Todolist from "../component/Todolist";
 import Footer from "../component/Footer";
 import Input from "../component/Input";
 import "../Css/Todo.css";
+import { ThemeContext } from "../context/Theme"; // Import ThemeContext từ file chứa context Theme
 
 export const FILTER = {
   ALL: "ALL",
   ACTIVE: "ACTIVE",
   COMPLETED: "COMPLETED",
 };
+
 class Todo extends React.Component {
+  static contextType = ThemeContext; // Khai báo contextType để sử dụng context
+
   constructor(props) {
     super(props);
     this.state = {
@@ -35,8 +39,6 @@ class Todo extends React.Component {
           itemId: Math.floor(Math.random() * 1000),
         };
         newState.itemList.push(newItem);
-        // newState.filterList[FILTER.ACTIVE].push(newItem);
-        // newState.filterList[FILTER.ALL].push(newItem);
       })
     );
   };
@@ -137,38 +139,46 @@ class Todo extends React.Component {
     this.dataRef.current.updateState(itemId, content);
   };
 
+  toggleTheme = () => {
+    const { theme, setTheme } = this.context;
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+  };
+
   render() {
     const { itemList, filter } = this.state;
-    console.log(this.dataRef.current);
+    console.log(this.context);
 
     return (
-      <div className="mainTodo">
-        <div className="containerTodo">
-          {" "}
-          <h1 className="title">TODOS</h1>
-          <Input
-            className="inputTodo"
-            addItem={this.addItem}
-            itemList={itemList}
-            checkAllItem={this.checkAllItem}
-            updateItem={this.updateItem}
-            ref={this.dataRef}
-          />
-          <Todolist
-            className="todoList"
-            itemList={itemList}
-            deleteItem={this.deleteItem}
-            checkstatus={this.checkstatus}
-            checkAllItem={this.checkAllItem}
-            selectItem={this.selectItem}
-          />
-          <Footer
-            className="footer"
-            setFilter={this.setFilter}
-            filter={this.state.filter}
-          />
+      <ThemeContext.Consumer>
+        <div className="mainTodo">
+          <div className="containerTodo">
+            <h1 className="title">TODOS</h1>
+            <Input
+              className="inputTodo"
+              addItem={this.addItem}
+              itemList={itemList}
+              checkAllItem={this.checkAllItem}
+              updateItem={this.updateItem}
+              ref={this.dataRef}
+            />
+            <Todolist
+              className="todoList"
+              itemList={itemList}
+              deleteItem={this.deleteItem}
+              checkstatus={this.checkstatus}
+              checkAllItem={this.checkAllItem}
+              selectItem={this.selectItem}
+            />
+            <Footer
+              className="footer"
+              setFilter={this.setFilter}
+              filter={this.state.filter}
+            />
+            <button onClick={this.toggleTheme}>Change Theme</button>
+          </div>
         </div>
-      </div>
+      </ThemeContext.Consumer>
     );
   }
 }

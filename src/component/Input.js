@@ -40,7 +40,6 @@ class Input extends React.Component {
     checkAllItem();
   };
   render() {
-    console.log(this.inputRef.current);
     // console.log(this.inputRef.current.value);
 
     return (

@@ -11,7 +11,7 @@ class Todolist extends React.Component {
     this.state = {
       page: 1,
     };
-    this.handleClickBtn = this.handleClickBtn.bind(this);
+
     this.data1ref = React.createRef();
   }
 
@@ -39,11 +39,6 @@ class Todolist extends React.Component {
     }
   };
 
-  handleClickBtn = () => {
-    const { checkAllItem } = this.props;
-    checkAllItem();
-  };
-
   render() {
     const { itemList, deleteItem, checkstatus, filterList, filter } =
       this.props;
@@ -53,9 +48,6 @@ class Todolist extends React.Component {
 
     return (
       <div className="mainTodolist">
-        <div className="button-container">
-          <button onClick={this.handleClickBtn}>CHECK ALL</button>
-        </div>
         {currentItems.map((item) => (
           <Item
             ref={this.data1ref}
