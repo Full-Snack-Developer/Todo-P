@@ -6,6 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import "./component/Todo";
 import Todo from "./component/Todo";
 import { ThemeContext } from "./context/Theme";
+import "./Css/Theme.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

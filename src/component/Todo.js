@@ -141,9 +141,9 @@ class Todo extends React.Component {
   };
 
   toggleTheme = () => {
-    const { theme, setTheme } = this.context;
+    const { theme, toggleTheme } = this.context;
     const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
+    toggleTheme(newTheme);
   };
 
   render() {
@@ -152,33 +152,39 @@ class Todo extends React.Component {
 
     return (
       <ThemeContext.Consumer>
-        <div className="mainTodo">
-          <div className="containerTodo">
-            <h1 className="title">TODOS</h1>
-            <Input
-              className="inputTodo"
-              addItem={this.addItem}
-              itemList={itemList}
-              checkAllItem={this.checkAllItem}
-              updateItem={this.updateItem}
-              ref={this.dataRef}
-            />
-            <Todolist
-              className="todoList"
-              itemList={itemList}
-              deleteItem={this.deleteItem}
-              checkstatus={this.checkstatus}
-              checkAllItem={this.checkAllItem}
-              selectItem={this.selectItem}
-            />
-            <Footer
-              className="footer"
-              setFilter={this.setFilter}
-              filter={this.state.filter}
-            />
-            <button onClick={this.toggleTheme}>Change Theme</button>
+        {(theme, toggleTheme) => (
+          <div
+            className={
+              theme === "light" ? "theme-dark mainTodo" : "theme-light mainTodo"
+            }
+          >
+            <div className="containerTodo">
+              <h1 className="title">TODOS</h1>
+              <Input
+                className="inputTodo"
+                addItem={this.addItem}
+                itemList={itemList}
+                checkAllItem={this.checkAllItem}
+                updateItem={this.updateItem}
+                ref={this.dataRef}
+              />
+              <Todolist
+                className="todoList"
+                itemList={itemList}
+                deleteItem={this.deleteItem}
+                checkstatus={this.checkstatus}
+                checkAllItem={this.checkAllItem}
+                selectItem={this.selectItem}
+              />
+              <Footer
+                className="footer"
+                setFilter={this.setFilter}
+                filter={this.state.filter}
+              />
+              <button onClick={toggleTheme}>Change Theme</button>
+            </div>
           </div>
-        </div>
+        )}
       </ThemeContext.Consumer>
     );
   }
