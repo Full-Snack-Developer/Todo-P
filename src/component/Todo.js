@@ -5,7 +5,8 @@ import Todolist from "../component/Todolist";
 import Footer from "../component/Footer";
 import Input from "../component/Input";
 import "../Css/Todo.css";
-import { ThemeContext } from "../context/Theme"; // Import ThemeContext từ file chứa context Theme
+import { ThemeContext } from "../context/Theme";
+import "../Css/Theme.css";
 
 export const FILTER = {
   ALL: "ALL",
@@ -14,7 +15,7 @@ export const FILTER = {
 };
 
 class Todo extends React.Component {
-  static contextType = ThemeContext; // Khai báo contextType để sử dụng context
+  static contextType = ThemeContext;
 
   constructor(props) {
     super(props);
