@@ -5,8 +5,7 @@ import Todolist from "../component/Todolist";
 import Footer from "../component/Footer";
 import Input from "../component/Input";
 import "../Css/Todo.css";
-import { ThemeContext } from "../context/Theme";
-import "../Css/Theme.css";
+import { ThemeContext } from "../context/ThemeProvider";
 
 export const FILTER = {
   ALL: "ALL",
@@ -140,24 +139,14 @@ class Todo extends React.Component {
     this.dataRef.current.updateState(itemId, content);
   };
 
-  toggleTheme = () => {
-    const { theme, toggleTheme } = this.context;
-    const newTheme = theme === "light" ? "dark" : "light";
-    toggleTheme(newTheme);
-  };
-
   render() {
     const { itemList, filter } = this.state;
     console.log(this.context);
 
     return (
-      <ThemeContext.Consumer>
-        {(theme, toggleTheme) => (
-          <div
-            className={
-              theme === "light" ? "theme-dark mainTodo" : "theme-light mainTodo"
-            }
-          >
+      <ThemeContext>
+        {(themes, changeTheme) => (
+          <div style={themes.themeLight}>
             <div className="containerTodo">
               <h1 className="title">TODOS</h1>
               <Input
@@ -181,11 +170,11 @@ class Todo extends React.Component {
                 setFilter={this.setFilter}
                 filter={this.state.filter}
               />
-              <button onClick={toggleTheme}>Change Theme</button>
+              <button onClick={changeTheme}>Change Theme</button>
             </div>
           </div>
         )}
-      </ThemeContext.Consumer>
+      </ThemeContext>
     );
   }
 }

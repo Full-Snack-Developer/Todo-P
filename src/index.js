@@ -5,15 +5,11 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import "./component/Todo";
 import Todo from "./component/Todo";
-import { ThemeContext } from "./context/Theme";
-import "./Css/Theme.css";
+import ThemeProvider from "./context/ThemeProvider";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <ThemeContext.Provider value={""}>
-    <Todo />
-  </ThemeContext.Provider>
-);
+
+root.render(<ThemeProvider>{() => <Todo />}</ThemeProvider>);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
