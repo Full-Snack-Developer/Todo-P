@@ -1,0 +1,10 @@
+.mainItem {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  border: 1px solid black;
+  height: 30px;
+  width: 300px;
+  padding: 5px;
+  margin-bottom: 5px;
+}
